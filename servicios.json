@@ -1,0 +1,32 @@
+[
+    {
+        "service": "Luz",
+        "valor": 9500,
+        "editorial": "EDEA"
+    },
+    {
+        "service": "Gas",
+        "valor": 3200,
+        "editorial": "Camuzzi"
+    },
+    {
+        "service": "Agua",
+        "valor": 900,
+        "editorial": "ABSA"
+    },
+    {
+        "service": "Internet",
+        "valor": 4200,
+        "editorial": "Loganet"
+    },
+    {
+        "service": "Colegio",
+        "valor": 21500,
+        "editorial": "CJN"
+    },
+    {
+        "service": "Seguro Automotor",
+        "valor": 13200,
+        "editorial": "Federación Patronal"
+    }
+]

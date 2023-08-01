@@ -79,7 +79,20 @@ function recuperarCarrito() {
     }
 }
 
-function carrito(event) {
+async function obtenerPrecio(idServicio) {
+    try {
+        const response = await fetch('servicios.json');
+        const data = await response.json();
+        const precioServicio = data[idServicio]?.valor || 0;
+        return precioServicio;
+    } catch (error) {
+        console.error('Error al obtener el precio del servicio:', error);
+        return 0;
+    }
+}
+
+
+async function carrito(event) {
     event.preventDefault();
 
     const eleccionSelect = document.getElementById('eleccion');
@@ -93,8 +106,14 @@ function carrito(event) {
         return;
     }
 
-    subtotal = catalogo[eleccion].valor * cantidad;
-    const nuevoItem = new ItemFactura(catalogo[eleccion].service, catalogo[eleccion].valor, cantidad, subtotal);
+    const precioServicio = await obtenerPrecio(eleccion);
+    if (precioServicio === 0) {
+        alert('No se pudo obtener el precio del servicio. Intente nuevamente más tarde.');
+        return;
+    }
+
+    subtotal = precioServicio * cantidad;
+    const nuevoItem = new ItemFactura(catalogo[eleccion].service, precioServicio, cantidad, subtotal);
     arrayItems.push(nuevoItem);
     valorFinal += subtotal;
 
@@ -123,29 +142,42 @@ function mostrarItemsCarrito() {
     });
 }
 
-function mostrarComprobante() {
-    const comprobanteText = document.getElementById('comprobanteText');
-
-    if (arrayItems.length === 0) {
-        comprobanteText.textContent = 'No hay elementos en el carrito.';
-        return;
-    }
-
-    const stringItemFactura = arrayItems.map((item, index) => `${index + 1} - Servicio: ${item.service} | Precio: $${item.valor} | Cantidad de boletas: ${item.cantidad} | Subtotal: $${item.subtotal}`);
-    comprobanteText.textContent = 'COMPROBANTE DE PAGO\n\n' + stringItemFactura.join('\n\n') + '\n\nTotal a pagar = $' + valorFinal + '.';
-}
-
 function limpiarCarrito() {
     arrayItems.length = 0;
     valorFinal = 0;
-
-    const carritoElement = document.getElementById('items');
-    carritoElement.innerHTML = '';
+    guardarCarrito();
+    mostrarItemsCarrito();
 
     const totalElement = document.getElementById('total');
-    totalElement.textContent = 'Total a pagar = $0';
+    totalElement.textContent = `Total a pagar = $${valorFinal}`;
+}
 
-    guardarCarrito();
+function mostrarComprobante() {
+    const comprobanteElement = document.getElementById('comprobante');
+    const carritoElement = document.getElementById('items');
+
+    if (arrayItems.length === 0) {
+        alert('El carrito está vacío. Agregue servicios antes de mostrar el comprobante.');
+        return;
+    }
+
+    comprobanteElement.style.display = 'none';
+
+    const stringItemFactura = arrayItems.map((item, index) => (index + 1) + ' - Servicio: ' + item.service + ' | Precio: $' + item.valor + ' | Cantidad de boletas: ' + item.cantidad + ' | Subtotal: $' + item.subtotal);
+    const comprobanteList = document.createElement('ul');
+    comprobanteList.innerHTML = stringItemFactura.map(item => `<li>${item}</li>`).join('');
+
+    const totalElement = document.createElement('p');
+    totalElement.textContent = `Total a pagar = $${valorFinal}`;
+
+    const comprobanteContainer = document.getElementById('comprobanteContainer');
+
+    comprobanteContainer.innerHTML = '';
+    comprobanteContainer.appendChild(comprobanteList);
+    comprobanteContainer.appendChild(totalElement);
+    comprobanteElement.style.display = 'block';
+
+    comprobanteContainer.scrollIntoView({ behavior: 'smooth' });
 }
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -161,6 +193,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const limpiarBtn = document.getElementById('limpiar');
     limpiarBtn.addEventListener('click', limpiarCarrito);
 
-    // Guardar el carrito al cerrar la página
-    window.addEventListener('beforeunload', guardarCarrito);
 });
+
+window.addEventListener('beforeunload', guardarCarrito);
+;

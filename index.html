@@ -6,19 +6,31 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Plataforma de pagos</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.min.js"></script>
 </head>
 
 <body>
     <h1>Bienvenido a la central de pagos</h1>
 
-    <form class="selectorDeServicio" id="carritoForm">
-        <label class="selectorInterno" for="eleccion">Elija un servicio para pagar:</label>
-        <select class="selectorInterno" id="eleccion"></select>
+    <form id="carritoForm" class="container mt-3">
+        <div class="row mb-3">
+            <label for="eleccion" class="col-sm-2 col-form-label">Elija un servicio:</label>
+            <div class="col-sm-10">
+                <select id="eleccion" class="form-select" required>
+                    <option disabled selected>Seleccione un servicio...</option>
+                </select>
+            </div>
+        </div>
 
-        <label class="selectorInterno" for="cantidad">Cantidad de meses:</label>
-        <input class="selectorInterno" type="number" id="cantidad" min="1" required>
+        <div class="row mb-3">
+            <label for="cantidad" class="col-sm-2 col-form-label">Cantidad de meses:</label>
+            <div class="col-sm-10">
+                <input type="number" id="cantidad" class="form-control" min="1" required>
+            </div>
+        </div>
 
-        <button class="selectorInterno" type="submit">Agregar a la cuenta</button>
+        <button type="submit" class="btn btn-primary">Agregar al carrito</button>
     </form>
 
     <h2>Carrito:</h2>
@@ -30,6 +42,7 @@
 
     <h2>Comprobante de Pago:</h2>
     <button id="comprobante">Mostrar Comprobante</button>
+    <div id="comprobanteContainer"></div>
     <p id="comprobanteText"></p>
 
     <script src="./javascript/script.js"></script>
